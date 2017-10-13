@@ -17,6 +17,7 @@ static Hook hooks[HOOK_END] = {
         {-1, 0, "SceIofilemgr", 0x40FD29C7, 0xE17EFC03, _ksceIoRead},
         {-1, 0, "SceIofilemgr", 0x40FD29C7, 0x21EE91F0, _ksceIoWrite},
         {-1, 0, "SceIofilemgr", 0x40FD29C7, 0x62090481, _ksceIoLseek},
+		{-1, 0, "SceIofilemgr", 0x40FD29C7, 0x62090481 /*No NID Know*/, _ksceIoLseek32},
         {-1, 0, "SceIofilemgr", 0x40FD29C7, 0x0D7BB3E1, _ksceIoRemove},
         {-1, 0, "SceIofilemgr", 0x40FD29C7, 0xDC0C4997, _ksceIoRename},
         // io/fcntl.h
@@ -231,6 +232,23 @@ SceOff _ksceIoLseek(SceUID uid, SceOff offset, int whence) {
 
     res = io_lseek(ffd->fd, offset, whence);
     printf("_ksceIoLseek(0x%08X, %lld, %i) == %lld\n", ffd->fd, offset, whence, res);
+
+    return res;
+}
+
+int _ksceIoLseek32(SceUID uid, int offset, int whence) {
+
+    int res;
+    fopen_fd *ffd;
+
+    res = ksceKernelGetObjForUid(uid, &p2sIoClass, (SceObjectBase **) &ffd);
+    if (res < 0) {
+        //printf("_ksceIoLseek32: ksceKernelGetObjForUid(%x): 0x%08X\n", uid, res);
+        return TAI_CONTINUE(int, hooks[HOOK_IO_KLSEEK32].ref, uid, offset, whence);
+    }
+
+    res = io_lseek(ffd->fd, offset, whence);
+    printf("_ksceIoLseek32(0x%08X, %lld, %i) == %lld\n", ffd->fd, offset, whence, res);
 
     return res;
 }

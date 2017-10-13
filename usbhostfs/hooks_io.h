@@ -38,6 +38,7 @@ enum {
     HOOK_IO_KREAD,
     HOOK_IO_KWRITE,
     HOOK_IO_KLSEEK,
+	HOOK_IO_KLSEEK32,
     HOOK_IO_KREMOVE,
     HOOK_IO_KRENAME,
     HOOK_IO_KDOPEN,
@@ -64,6 +65,8 @@ int _ksceIoRead(SceUID fd, void *data, SceSize size);
 int _ksceIoWrite(SceUID fd, const void *data, SceSize size);
 
 SceOff _ksceIoLseek(SceUID fd, SceOff offset, int whence);
+
+int _ksceIoLseek32(SceUID uid, int offset, int whence);
 
 int _ksceIoRemove(const char *file);
 
